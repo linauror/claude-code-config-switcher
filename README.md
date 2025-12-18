@@ -8,7 +8,7 @@
 
 ## 界面截图
 
-![界面截图](screenshot.png)
+![界面截图](https://github.com/linauror/claude-code-config-switcher/blob/main/ScreenShot.png)
 
 ## 系统要求
 
