@@ -27,7 +27,7 @@ git clone https://github.com/linauror/claude-code-config-switcher.git
 cd claude-code-config-switcher
 
 # 编译程序
-go build
+go build -ldflags -H=windowsgui .
 ```
 
 双击运行 `claude-code-config-switcher.exe` 即可启动应用程序。
