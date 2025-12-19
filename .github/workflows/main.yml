@@ -54,7 +54,7 @@ jobs:
           if [[ "$OS_NAME" == "windows" ]]; then
             mv "${APP_NAME}.exe" "output/${APP_NAME}-${OS_NAME}.exe"
           elif [[ "$OS_NAME" == "linux" ]]; then
-            mv "${APP_NAME}.tar.xz" "output/${APP_NAME}-${OS_NAME}.tar.xz"
+            mv "${APP_NAME}.tar.gz" "output/${APP_NAME}-${OS_NAME}.tar.gz"
           elif [[ "$OS_NAME" == "macos" ]]; then
             zip -r "output/${APP_NAME}-${OS_NAME}.zip" "${APP_NAME}.app"
             rm -rf "${APP_NAME}.app"
