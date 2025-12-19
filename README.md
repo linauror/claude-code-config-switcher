@@ -38,10 +38,8 @@ go build -ldflags -H=windowsgui .
 # 安装 fyne 工具
 go install fyne.io/tools/cmd/fyne@latest
 
-# 为不同平台打包
-fyne package -os windows -icon icon.png
-fyne package -os linux -icon icon.png
-fyne package -os darwin -icon icon.png
+# 打包
+fyne package
 ```
 
 ### 添加新配置
