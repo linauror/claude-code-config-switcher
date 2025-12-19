@@ -29,9 +29,9 @@ jobs:
             goarch: arm64
       fail-fast: true
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup Go environment
-        uses: actions/setup-go@v2.1.3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.22.1
       - name: Cache downloaded module
@@ -57,13 +57,13 @@ jobs:
           if [ $GOOS = "windows" ]; then export ZIP_NAME="${ZIP_NAME%????}"; fi
           zip -j "output/${ZIP_NAME}.zip" "output/$BINARY_NAME" README.md
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: ${{ !github.head_ref }}
         with:
           name: ${{ matrix.goos }}_${{ matrix.goarch }}
           path: output/
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: output/*.zip
           draft: true
