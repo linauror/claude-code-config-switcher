@@ -60,34 +60,20 @@ jobs:
             rm -rf "${APP_NAME}.app"
           fi
 
-      - name: Upload Platform Artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}-build
           path: output/
 
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Download All Platform Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Collect All Release Assets
-        run: |
-          mkdir release-assets
-          find artifacts -type f -exec mv {} release-assets/ \;
-
-      - name: Create GitHub Release
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: output/*
-          draft: true
+          files: |
+            output/*
+          draft: false
+          prerelease: false
           generate_release_notes: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
