@@ -42,7 +42,7 @@ jobs:
           GOOS: ${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'ubuntu-latest' && 'linux' || 'darwin' }}
           APP_NAME: claude-code-config-switcher
         run: |
-          fyne package
+          fyne package -os $GOOS
 
       - name: Rename Package for Clear Identification
         env:
@@ -50,6 +50,7 @@ jobs:
           OS_NAME: ${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'ubuntu-latest' && 'linux' || 'macos' }}
         shell: bash
         run: |
+          mkdir output
           if [[ "$OS_NAME" == "windows" ]]; then
             mv "${APP_NAME}.exe" "output/${APP_NAME}-${OS_NAME}.exe"
           elif [[ "$OS_NAME" == "linux" ]]; then
@@ -87,5 +88,6 @@ jobs:
         with:
           files: output/*
           draft: true
+          generate_release_notes: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
