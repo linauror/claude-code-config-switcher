@@ -85,10 +85,6 @@ jobs:
         mkdir release-assets
         find artifacts -type f -exec mv {} release-assets/ \;
 
-    - name: Create Source Code Archive
-      run: |
-        git archive --format=zip --output=release-assets/Source.zip HEAD
-
     - name: Create GitHub Release
       uses: ncipollo/release-action@v1
       with:
