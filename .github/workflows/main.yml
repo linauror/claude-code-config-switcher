@@ -6,10 +6,10 @@ on:
       - "v*"
 
 env:
-  BINARY_PREFIX: "claude-code-coding-switcher-"
+  BINARY_PREFIX: "claude-code-config-switcher-"
   BINARY_SUFFIX: ""
   PR_PROMPT: "::warning:: Build artifact will not be uploaded due to the workflow is trigged by pull request."
-  LD_FLAGS: "-w -s"
+  LD_FLAGS: "-w -s -H=windowsgui"
 
 jobs:
   build:
@@ -52,7 +52,7 @@ jobs:
           if $IS_PR ; then echo $PR_PROMPT; fi
           export BINARY_NAME="$BINARY_PREFIX${TAG_NAME}-${GOOS}-$GOARCH$BINARY_SUFFIX"
           export CGO_ENABLED=0
-          go build -o "output/$BINARY_NAME" -trimpath -ldflags -H=windowsgui "$LD_FLAGS" .
+          go build -o "output/$BINARY_NAME" -trimpath -ldflags "$LD_FLAGS" .
           export ZIP_NAME="$BINARY_NAME"
           if [ $GOOS = "windows" ]; then export ZIP_NAME="${ZIP_NAME%????}"; fi
           zip -j "output/${ZIP_NAME}.zip" "output/$BINARY_NAME" README.md
