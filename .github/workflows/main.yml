@@ -3,8 +3,8 @@ name: Build and Release Claude Code Config Switcher
 on:
   push:
     tags:
-      - 'v*'  # 当推送如 v1.0.0、v2.1.3 等 tag 时自动触发 Release
-  workflow_dispatch:  # 支持手动触发工作流
+      - "v*" # 当推送如 v1.0.0、v2.1.3 等 tag 时自动触发 Release
+  workflow_dispatch: # 支持手动触发工作流
 
 jobs:
   build:
@@ -14,59 +14,56 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.22.1'
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.1"
 
-    - name: Install Linux dependencies (for Fyne)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev
+      - name: Install Linux dependencies (for Fyne)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev
 
-    - name: Install Windows dependencies (MinGW for Fyne)
-      if: matrix.os == 'windows-latest'
-      run: choco install mingw -y
+      - name: Install Windows dependencies (MinGW for Fyne)
+        if: matrix.os == 'windows-latest'
+        run: choco install mingw -y
 
-    - name: Install Fyne CLI
-      run: go install fyne.io/tools/cmd/fyne@latest
+      - name: Install Fyne CLI
+        run: go install fyne.io/tools/cmd/fyne@latest
 
-    - name: Build and Package with Fyne
-      env:
-        GOOS: ${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'ubuntu-latest' && 'linux' || 'darwin' }}
-        APP_NAME: claude-code-config-switcher
-      run: |
-        fyne package
+      - name: Build and Package with Fyne
+        env:
+          GOOS: ${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'ubuntu-latest' && 'linux' || 'darwin' }}
+          APP_NAME: claude-code-config-switcher
+        run: |
+          fyne package
 
-    - name: Rename Package for Clear Identification
-      env:
-        APP_NAME: claude-code-config-switcher
-        OS_NAME: ${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'ubuntu-latest' && 'linux' || 'macos' }}
-      shell: bash
-      run: |
-        if [[ "$OS_NAME" == "windows" ]]; then
-          mv "${APP_NAME}.exe" "${APP_NAME}-${OS_NAME}.exe"
-        elif [[ "$OS_NAME" == "linux" ]]; then
-          mv "${APP_NAME}.tar.xz" "${APP_NAME}-${OS_NAME}.tar.xz"
-        elif [[ "$OS_NAME" == "macos" ]]; then
-          zip -r "${APP_NAME}-${OS_NAME}.zip" "${APP_NAME}.app"
-          rm -rf "${APP_NAME}.app"
-        fi
+      - name: Rename Package for Clear Identification
+        env:
+          APP_NAME: claude-code-config-switcher
+          OS_NAME: ${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'ubuntu-latest' && 'linux' || 'macos' }}
+        shell: bash
+        run: |
+          if [[ "$OS_NAME" == "windows" ]]; then
+            mv "${APP_NAME}.exe" "output/${APP_NAME}-${OS_NAME}.exe"
+          elif [[ "$OS_NAME" == "linux" ]]; then
+            mv "${APP_NAME}.tar.xz" "output/${APP_NAME}-${OS_NAME}.tar.xz"
+          elif [[ "$OS_NAME" == "macos" ]]; then
+            zip -r "output/${APP_NAME}-${OS_NAME}.zip" "${APP_NAME}.app"
+            rm -rf "${APP_NAME}.app"
+          fi
 
-    - name: Upload Platform Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ runner.os }}-build
-        path: |
-          claude-code-config-switcher-*.exe
-          claude-code-config-switcher-*.tar.xz
-          claude-code-config-switcher-*.zip
+      - name: Upload Platform Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}-build
+          path: output/
 
   release:
     needs: build
@@ -75,20 +72,20 @@ jobs:
       contents: write
 
     steps:
-    - name: Download All Platform Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: artifacts
+      - name: Download All Platform Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
 
-    - name: Collect All Release Assets
-      run: |
-        mkdir release-assets
-        find artifacts -type f -exec mv {} release-assets/ \;
+      - name: Collect All Release Assets
+        run: |
+          mkdir release-assets
+          find artifacts -type f -exec mv {} release-assets/ \;
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: output/*.zip
-        draft: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: output/*
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
