@@ -35,7 +35,7 @@ jobs:
       run: choco install mingw -y
 
     - name: Install Fyne CLI
-      run: go install fyne.io/fyne/v2/cmd/fyne@latest
+      run: go install fyne.io/tools/cmd/fyne@latest
 
     - name: Build and Package with Fyne
       env:
