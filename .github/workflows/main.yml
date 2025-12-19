@@ -42,7 +42,7 @@ jobs:
         GOOS: ${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'ubuntu-latest' && 'linux' || 'darwin' }}
         APP_NAME: claude-code-config-switcher
       run: |
-        fyne package -os $GOOS -name $APP_NAME -icon icon.png
+        fyne package -os $GOOS -name $APP_NAME -icon icon.png -release
 
     - name: Rename Package for Clear Identification
       env:
